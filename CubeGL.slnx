@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="CubeGL/CubeGL.vcxproj" Id="c67d4a15-e6af-4552-8085-8ada3aecdccf" />
+</Solution>
