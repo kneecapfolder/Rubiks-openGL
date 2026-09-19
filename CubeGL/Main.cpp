@@ -17,7 +17,7 @@ const int WIN_WIDTH  = 800;
 const int WIN_HEIGHT = 600;
 
 void processInput(GLFWwindow* window);
-void bindTexture(const char* texturePath, GLenum slot);
+unsigned int bindTexture(const char* texturePath, GLenum slot);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 template <typename Func>
 void turn(Func condition);
@@ -29,7 +29,7 @@ float lastTime  = 0.0f;
 std::vector<Cube> cubes;
 std::vector<Cube*> selectedCubes;
 float slideTimer = 0.0f;
-float turnSpeedMult = 8.0f;
+float turnSpeedMult = 2.0f;
 int counterClock = -1;
 glm::vec3 turnAxis;
 bool shiftDown = false;
@@ -65,10 +65,11 @@ int main()
 
 	glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
 	glEnable(GL_DEPTH_TEST);
-	glClearColor(0.3f, 0.607f, 0.1f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glfwSetKeyCallback(window, key_callback);
 
-
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
 
@@ -78,7 +79,10 @@ int main()
 	glm::mat4 clip  = glm::perspective(glm::radians(camera.Zoom), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
 
 	
-	
+
+
+
+
 
 
 	// Cube Shader Program
@@ -88,6 +92,7 @@ int main()
 	shader.setMat4("projection", clip);
 	bindTexture("cube-side.png", GL_TEXTURE0);
 	shader.setInt("Texture", 0);
+	shader.setVec3("LightColor", glm::vec3(1.0f));
 
 
 
@@ -126,34 +131,64 @@ int main()
 	cubes.emplace_back(glm::vec3( 0.0f, -1.0f,  1.0f));
 	cubes.emplace_back(glm::vec3( 1.0f, -1.0f,  1.0f));
 
+	// light source
+	glm::vec3 lightPos(3.0f);
+	float iconPlane[] = {
+		// vertex position    // uv coords
+		-0.5f, -0.5f,  0.0f,  0.0f, 0.0f,
+		 0.5f, -0.5f,  0.0f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.0f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.0f,  1.0f, 1.0f,
+		-0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.0f,  0.0f, 0.0f,
+	};
 
+	unsigned int planeVBO, planeVAO;
+	glGenVertexArrays(1, &planeVAO);
+	glBindVertexArray(planeVAO);
 
+	glGenBuffers(1, &planeVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(iconPlane), iconPlane, GL_STATIC_DRAW);
+	// vertex positions
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	// side colors
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	Shader lightSourceShader("sourceV.glsl", "sourceF.glsl");
+	lightSourceShader.use();
+	lightSourceShader.setMat4("view", view);
+	lightSourceShader.setMat4("projection", clip);
+	bindTexture("lightsource.png", GL_TEXTURE1);
+	lightSourceShader.setInt("Texture", 1);
 
 
 	// Background
-	float bgVerts[] = {
-		-1.0f,  1.0f, 1.0f,
-		 1.0f,  1.0f, 1.0f,
-		-1.0f, -1.0f, 1.0f,
+	//float bgVerts[] = {
+	//	-1.0f,  1.0f, 1.0f,
+	//	 1.0f,  1.0f, 1.0f,
+	//	-1.0f, -1.0f, 1.0f,
 
-		-1.0f, -1.0f, 1.0f,
-		 1.0f, -1.0f, 1.0f,
-		 1.0f,  1.0f, 1.0f,
-	};
+	//	-1.0f, -1.0f, 1.0f,
+	//	 1.0f, -1.0f, 1.0f,
+	//	 1.0f,  1.0f, 1.0f,
+	//};
 
-	unsigned int bgVBO, bgVAO;
-	glGenVertexArrays(1, &bgVAO);
-	glBindVertexArray(bgVAO);
-	
-	glGenBuffers(1, &bgVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, bgVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(bgVerts), bgVerts, GL_STATIC_DRAW);
+	//unsigned int bgVBO, bgVAO;
+	//glGenVertexArrays(1, &bgVAO);
+	//glBindVertexArray(bgVAO);
+	//
+	//glGenBuffers(1, &bgVBO);
+	//glBindBuffer(GL_ARRAY_BUFFER, bgVBO);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(bgVerts), bgVerts, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	//glEnableVertexAttribArray(0);
 
-	Shader bgProgram("bgv.glsl", "bgf.glsl");
-	bgProgram.use();
+	//Shader bgProgram("bgv.glsl", "bgf.glsl");
+	//bgProgram.use();
 
 
 	// render loop
@@ -192,23 +227,39 @@ int main()
 		}
 
 
+		lightPos.x = 2.25f * cos(glm::radians(glfwGetTime() * 100.0f));
+		lightPos.y = 2.0f + 0.3f * sin(glm::radians(glfwGetTime() * 100.0f));
+		//lightPos.z = 3.0f * sin(glm::radians(glfwGetTime() * 50.0f));
 
-
+		//lightPos.x = 1.5f;
+		//lightPos.y = 2.0f;
+		lightPos.z = 2.0f;
 
 
 
 
 		// render background
-		glDisable(GL_DEPTH_TEST);
+		/*glDisable(GL_DEPTH_TEST);
 		bgProgram.use();
 		glBindVertexArray(bgVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawArrays(GL_TRIANGLES, 0, 6);*/
+
+
+		// render light source
+		glBindVertexArray(planeVAO);
+		lightSourceShader.use();
+		lightSourceShader.setMat4("model", glm::translate(glm::mat4(1.0f), lightPos));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		// render cubes
-		glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_DEPTH_TEST);
 		shader.use();
+		shader.setVec3("lightPos", lightPos);
 		for (Cube &cube : cubes)
 			cube.Draw(shader);
+
+
+
 
 		glfwPollEvents();
 		glfwSwapBuffers(window);
@@ -228,7 +279,7 @@ void processInput(GLFWwindow* window)
 }
 
 
-void bindTexture(const char* texturePath, GLenum slot)
+unsigned int bindTexture(const char* texturePath, GLenum slot)
 {
 	unsigned int texture;
 	glGenTextures(1, &texture);
@@ -247,7 +298,7 @@ void bindTexture(const char* texturePath, GLenum slot)
 
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		//glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -256,6 +307,8 @@ void bindTexture(const char* texturePath, GLenum slot)
 	}
 
 	stbi_image_free(data);
+
+	return texture;
 }
 
 

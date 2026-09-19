@@ -55,12 +55,21 @@
     <None Include="bgf.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="sourceV.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="sourceF.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="cube-side.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="container.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="lightsource.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

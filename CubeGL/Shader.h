@@ -152,6 +152,15 @@ public:
 		glUniform2fv(location, 1, glm::value_ptr(value));
 	}
 
+	void setVec3(const std::string& name, glm::vec3 value) const
+	{
+		int location = glGetUniformLocation(ID, name.c_str());
+		if (location == -1)
+			std::cout << "Couldn't find uniform variable \"" << name.c_str() << "\"" << std::endl;
+
+		glUniform3fv(location, 1, glm::value_ptr(value));
+	}
+
 	void setMat4(const std::string& name, glm::mat4 value) const
 	{
 		int location = glGetUniformLocation(ID, name.c_str());

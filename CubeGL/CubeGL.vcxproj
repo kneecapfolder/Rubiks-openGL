@@ -159,11 +159,14 @@
     <None Include="bgf.glsl" />
     <None Include="bgv.glsl" />
     <None Include="fragment.glsl" />
+    <None Include="sourceF.glsl" />
+    <None Include="sourceV.glsl" />
     <None Include="vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="container.jpg" />
     <Image Include="cube-side.png" />
+    <Image Include="lightsource.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
