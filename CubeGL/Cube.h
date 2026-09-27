@@ -1,5 +1,6 @@
 #pragma once
 #include <glad/glad.h>
+#include <cstdbool>
 #include "Shader.h"
 
 class Cube
@@ -11,77 +12,30 @@ public:
 	glm::mat4 RotMat;
 	glm::mat4 OffsetMat;
 
-	Cube(glm::vec3 startPosition) : Position(glm::vec4(startPosition, 1.0f)), ModelMat(glm::translate(glm::mat4(1.0f), glm::vec3(startPosition))), RotMat(glm::mat4(1.0f)), OffsetMat(glm::mat4(1.0f)), vertices{
-		// positions		  // colors                   // uv coords   // normals
-
-		// back - green
-		-0.5f, -0.5f, -0.5f,  0.435f, 0.910f, 0.439f,     0.0f, 0.0f,    0.0f,  0.0f, -1.0f,
-		 0.5f, -0.5f, -0.5f,  0.435f, 0.910f, 0.439f,     1.0f, 0.0f,    0.0f,  0.0f, -1.0f,
-		 0.5f,  0.5f, -0.5f,  0.435f, 0.910f, 0.439f,     1.0f, 1.0f,    0.0f,  0.0f, -1.0f,
-		 0.5f,  0.5f, -0.5f,  0.435f, 0.910f, 0.439f,     1.0f, 1.0f,    0.0f,  0.0f, -1.0f,
-		-0.5f,  0.5f, -0.5f,  0.435f, 0.910f, 0.439f,     0.0f, 1.0f,    0.0f,  0.0f, -1.0f,
-		-0.5f, -0.5f, -0.5f,  0.435f, 0.910f, 0.439f,     0.0f, 0.0f,    0.0f,  0.0f, -1.0f,
-
-		// front - blue
-  		-0.5f, -0.5f,  0.5f,  0.0235f, 0.5608f, 0.8039f,  0.0f, 0.0f,    0.0f,  0.0f,  1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0235f, 0.5608f, 0.8039f,  1.0f, 0.0f,    0.0f,  0.0f,  1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0235f, 0.5608f, 0.8039f,  1.0f, 1.0f,    0.0f,  0.0f,  1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0235f, 0.5608f, 0.8039f,  1.0f, 1.0f,    0.0f,  0.0f,  1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0235f, 0.5608f, 0.8039f,  0.0f, 1.0f,    0.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0235f, 0.5608f, 0.8039f,  0.0f, 0.0f,    0.0f,  0.0f,  1.0f,
-
-		// left - red
-  		-0.5f,  0.5f,  0.5f,  1.0,     0.3176,  0.3725,   1.0f, 0.0f,   -1.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0,     0.3176,  0.3725,   1.0f, 1.0f,   -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f,  1.0,     0.3176,  0.3725,   0.0f, 1.0f,   -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f,  1.0,     0.3176,  0.3725,   0.0f, 1.0f,   -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f,  1.0,     0.3176,  0.3725,   0.0f, 0.0f,   -1.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0,     0.3176,  0.3725,   1.0f, 0.0f,   -1.0f,  0.0f,  0.0f,
-
-		// right - orange
-  		 0.5f,  0.5f,  0.5f,  0.988f,  0.529f,  0.043f,   1.0f, 0.0f,    1.0f,  0.0f,  0.0f,
-		 0.5f,  0.5f, -0.5f,  0.988f,  0.529f,  0.043f,   1.0f, 1.0f,    1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  0.988f,  0.529f,  0.043f,   0.0f, 1.0f,    1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  0.988f,  0.529f,  0.043f,   0.0f, 1.0f,    1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  0.988f,  0.529f,  0.043f,   0.0f, 0.0f,    1.0f,  0.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  0.988f,  0.529f,  0.043f,   1.0f, 0.0f,    1.0f,  0.0f,  0.0f,
-
-		 // bottom - yellow
-  		-0.5f, -0.5f, -0.5f,  1.0f,    0.894f,  0.396f,   0.0f, 1.0f,    0.0f, -1.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,    0.894f,  0.396f,   1.0f, 1.0f,    0.0f, -1.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f,    0.894f,  0.396f,   1.0f, 0.0f,    0.0f, -1.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f,    0.894f,  0.396f,   1.0f, 0.0f,    0.0f, -1.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f,  1.0f,    0.894f,  0.396f,   0.0f, 0.0f,    0.0f, -1.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f,  1.0f,    0.894f,  0.396f,   0.0f, 1.0f,    0.0f, -1.0f,  0.0f,
-
-		// top - white
- 		-0.5f,  0.5f, -0.5f,  1.0f,    1.0f,    1.0f,     0.0f, 1.0f,    0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f,    1.0f,    1.0f,     1.0f, 1.0f,    0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f,    1.0f,    1.0f,     1.0f, 0.0f,    0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f,    1.0f,    1.0f,     1.0f, 0.0f,    0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f,    1.0f,    1.0f,     0.0f, 0.0f,    0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f,    1.0f,    1.0f,     0.0f, 1.0f,    0.0f,  1.0f,  0.0f
-	}
+	Cube(glm::vec3 startPosition) : Position(glm::vec4(startPosition, 1.0f)), ModelMat(glm::translate(glm::mat4(1.0f), glm::vec3(startPosition))), RotMat(glm::mat4(1.0f)), OffsetMat(glm::mat4(1.0f))
 	{
-		glGenVertexArrays(1, &VAO);
-		glBindVertexArray(VAO);
+		if (VBO == 0)
+		{
+			glGenVertexArrays(1, &VAO);
+			glBindVertexArray(VAO);
 
-		glGenBuffers(1, &VBO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+			glGenBuffers(1, &VBO);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-		// vertex positions
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
-		// side colors
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
-		glEnableVertexAttribArray(1);
-		// uv coords
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
-		glEnableVertexAttribArray(2);
-		// normal vectors
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
-		glEnableVertexAttribArray(3);
+			// vertex positions
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(0);
+			// side colors
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
+			glEnableVertexAttribArray(1);
+			// uv coords
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
+			glEnableVertexAttribArray(2);
+			// normal vectors
+			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
+			glEnableVertexAttribArray(3);
+		}
 	}
 
 	void Draw(Shader program)
@@ -95,7 +49,57 @@ public:
 	}
 
 private:
-	float vertices[492];
-	unsigned int VBO, VAO;
+	inline static float vertices[492] = {
+		// positions		  // colors                   // uv coords   // normals
+
+		// back - green
+		-0.5f, -0.5f, -0.5f,  0.435f, 0.910f, 0.439f,     0.0f, 0.0f,    0.0f,  0.0f, -1.0f,
+		 0.5f, -0.5f, -0.5f,  0.435f, 0.910f, 0.439f,     1.0f, 0.0f,    0.0f,  0.0f, -1.0f,
+		 0.5f,  0.5f, -0.5f,  0.435f, 0.910f, 0.439f,     1.0f, 1.0f,    0.0f,  0.0f, -1.0f,
+		 0.5f,  0.5f, -0.5f,  0.435f, 0.910f, 0.439f,     1.0f, 1.0f,    0.0f,  0.0f, -1.0f,
+		-0.5f,  0.5f, -0.5f,  0.435f, 0.910f, 0.439f,     0.0f, 1.0f,    0.0f,  0.0f, -1.0f,
+		-0.5f, -0.5f, -0.5f,  0.435f, 0.910f, 0.439f,     0.0f, 0.0f,    0.0f,  0.0f, -1.0f,
+
+		// front - blue
+		-0.5f, -0.5f,  0.5f,  0.0235f, 0.5608f, 0.8039f,  0.0f, 0.0f,    0.0f,  0.0f,  1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0235f, 0.5608f, 0.8039f,  1.0f, 0.0f,    0.0f,  0.0f,  1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0235f, 0.5608f, 0.8039f,  1.0f, 1.0f,    0.0f,  0.0f,  1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0235f, 0.5608f, 0.8039f,  1.0f, 1.0f,    0.0f,  0.0f,  1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0235f, 0.5608f, 0.8039f,  0.0f, 1.0f,    0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0235f, 0.5608f, 0.8039f,  0.0f, 0.0f,    0.0f,  0.0f,  1.0f,
+
+		// left - red
+		-0.5f,  0.5f,  0.5f,  1.0,     0.3176,  0.3725,   1.0f, 0.0f,   -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0,     0.3176,  0.3725,   1.0f, 1.0f,   -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  1.0,     0.3176,  0.3725,   0.0f, 1.0f,   -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  1.0,     0.3176,  0.3725,   0.0f, 1.0f,   -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  1.0,     0.3176,  0.3725,   0.0f, 0.0f,   -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0,     0.3176,  0.3725,   1.0f, 0.0f,   -1.0f,  0.0f,  0.0f,
+
+		// right - orange
+		 0.5f,  0.5f,  0.5f,  0.988f,  0.529f,  0.043f,   1.0f, 0.0f,    1.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  0.988f,  0.529f,  0.043f,   1.0f, 1.0f,    1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  0.988f,  0.529f,  0.043f,   0.0f, 1.0f,    1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  0.988f,  0.529f,  0.043f,   0.0f, 1.0f,    1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.988f,  0.529f,  0.043f,   0.0f, 0.0f,    1.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.988f,  0.529f,  0.043f,   1.0f, 0.0f,    1.0f,  0.0f,  0.0f,
+
+		 // bottom - yellow
+		-0.5f, -0.5f, -0.5f,  1.0f,    0.894f,  0.396f,   0.0f, 1.0f,    0.0f, -1.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,    0.894f,  0.396f,   1.0f, 1.0f,    0.0f, -1.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f,    0.894f,  0.396f,   1.0f, 0.0f,    0.0f, -1.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f,    0.894f,  0.396f,   1.0f, 0.0f,    0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  1.0f,    0.894f,  0.396f,   0.0f, 0.0f,    0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  1.0f,    0.894f,  0.396f,   0.0f, 1.0f,    0.0f, -1.0f,  0.0f,
+
+		// top - white
+		-0.5f,  0.5f, -0.5f,  1.0f,    1.0f,    1.0f,     0.0f, 1.0f,    0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f,    1.0f,    1.0f,     1.0f, 1.0f,    0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,    1.0f,    1.0f,     1.0f, 0.0f,    0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,    1.0f,    1.0f,     1.0f, 0.0f,    0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f,    1.0f,    1.0f,     0.0f, 0.0f,    0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f,    1.0f,    1.0f,     0.0f, 1.0f,    0.0f,  1.0f,  0.0f
+	};
+	inline static unsigned int VBO = 0, VAO = 0;
 
 };
